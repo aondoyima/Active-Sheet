@@ -1,0 +1,40 @@
+import numpy as np
+import pickle
+import glob
+import os
+import utils
+
+beta = 0.7
+S0 = 0.04
+tmyosin = 5.0
+tviscous = 40.0
+btype = 2
+flow_align = 0.0
+plot_option = 0
+
+L = 50.0
+Ngrid = int(4*L + 1)
+vskip = 11 #11
+x = np.linspace(-0.5*L,0.5*L,Ngrid)
+y = np.linspace(-0.5*L,0.5*L,Ngrid)
+x_mesh, y_mesh = np.meshgrid(x,y)
+
+movie_location = f'.//plots_for_movies_L{L}/flow_align_{flow_align}/beta_{beta}/tmyosin_{tmyosin}/tviscous_{tviscous}/S0_{S0}/btype_{btype}/'
+os.makedirs(movie_location, exist_ok=True)
+
+sim_data_location = f'.//data_L{L}/flow_align_0.0/beta_{beta}/tmyosin_{tmyosin}/tviscous_{tviscous}/S0_{S0}/btype_{btype}/'
+files = sorted(glob.glob(sim_data_location + '/data*.pickle'))
+num_saved_steps = len(files)
+
+#f_idx indexes time for a given simulation
+for f_idx in range(num_saved_steps):
+    
+    f = sim_data_location+f'/data_{f_idx}.pickle'
+    print(f't_idx = {f_idx}')
+    sim_data = pickle.load(open(f,'rb'),encoding='latin1')
+    figname = movie_location+'/Panel{}.png'.format(int(f_idx))
+    utils.plot_field(plot_option, sim_data, x, y, vskip, Ngrid, beta, S0, tmyosin, tviscous, btype, figname, selected_field = 'Mxx')
+
+utils.pngs_to_movie(movie_location,'mov.gif')
+
+

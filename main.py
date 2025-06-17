@@ -1,23 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep  9 17:40:55 2022
-
-@author: deems
-"""
-
 import os
-# import numpy as np
-# from datetime import datetime
 from active_sheet import ActiveSheet
 import time
 import argparse
-#import shutil
-#import numpy as np
-# from tqdm import tqdm
-
-# plot_while_run = True
-# save_state = False
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-b", "--beta", type = float, default = 0.5, help = "activity parameter")
@@ -64,27 +48,22 @@ elif btype == 3:
     S0xx = -args.S0
     S0yy = -args.S0
     S0xy = 0.
-elif btype == 4: #pull on bottom only - code currently modified by hand. Fix this to make it a legit option
+elif btype == 4: #pull on bottom only 
     S0xx = 0
     S0yy = args.S0
     S0xy = 0
     
-#flow-align = 0: Jaumann, flow_align = 0.5: UC, flow_align = -0.5: LC.
+#flow-align = 0: Jaumann, flow_align = 0.5: Upper Convected, flow_align = -0.5: Lower Convected.
 flow_align = args.flow_align  
 
 #simulation_params
 sys_size = args.sys_size
-# Ngrid = int(4*sys_size + 1)
-#finer spacing
 Ngrid = int(4*sys_size + 1)
 h = sys_size / (Ngrid - 1)
 dt = 0.25 * (h ** 2) #default 0.25*(h**2)
-#trying smaller timestep
-# dt = 0.5*dt
 tplot = args.tplot
 tmax = args.tmax
 noise_amp = args.noise_amp
-#gradlim = 0.1 #0.1 
 gradlim = 0.1
 cutgrad = True
 myo_pert = False
@@ -93,7 +72,7 @@ myo_pert = False
 maxtsteps = round(tmax/dt)
 nskip = round(tplot/dt)
 
-vskip = 11
+vskip = 11 #For the quiver plot in simluator.plot()
 
 dirname_data = args.top_dir+f'/data_L{args.sys_size}/flow_align_{flow_align}/beta_{beta}/tmyosin_{tmyosin}/tviscous_{tviscous}/S0_{args.S0}/btype_{args.boundary}/'
 
@@ -112,31 +91,23 @@ simulator.save_params(dirname_data,nskip)
 t1 = time.time()
 
 k = 0
-#for k in tqdm(range(maxtsteps)):
-for k in range(maxtsteps):
-    
+
+for k in range(maxtsteps):    
     simulator.integrate_one_step()
     
-    if k%nskip == 0:
-        
-        # print(f'k = {k}')
-        print('k = {}'.format(k))
-            
+    if k%nskip == 0:  
+        print(f't = {k*dt:.2f}')         
         simulator.save_state(k,dirname_data,nskip)
                 
-        if args.plot:
-            
+        if args.plot:          
             simulator.plot(k,dirname_data,vskip,nskip) 
             
     simulator.update_current_values()
     k += 1
     
 t2 = time.time()
-
 run_time = t2-t1
-
 print(f'run_time = {run_time}')
-# print('run_time = {}'.format(run_time))
 
         
             

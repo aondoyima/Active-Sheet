@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-# import gzip
-# import bz2
-#import os
 
 class ActiveSheet:
 
@@ -203,9 +200,6 @@ class ActiveSheet:
         #Velocity and velocity gradients
         vx = DxSxx + DySxy
         vy = DxSxy + DySyy
-        
-        # print(vx)
-        # print(vy)
 
         Dxvx = DxxSxx + DxySxy
         Dyvx = DxySxx + DyySxy
@@ -229,14 +223,9 @@ class ActiveSheet:
         if self.cutgrad:
             
             #Put diffusion only on the boundary
-            #Write something to automatically vary the number of diffusion layers
             lapPxx[2:(self.Ngrid-2),2:(self.Ngrid-2)] = 0.
             lapPyy[2:(self.Ngrid-2),2:(self.Ngrid-2)] = 0.
             lapPxy[2:(self.Ngrid-2),2:(self.Ngrid-2)] = 0.
-            
-            # lapPxx[3:(self.Ngrid-3),3:(self.Ngrid-3)] = 0.
-            # lapPyy[3:(self.Ngrid-3),3:(self.Ngrid-3)] = 0.
-            # lapPxy[3:(self.Ngrid-3),3:(self.Ngrid-3)] = 0.
             
             #Tell me where the laplacian is non-zero
             badpts = np.where(lapPxx != 0)
@@ -252,8 +241,7 @@ class ActiveSheet:
             
             # where_badpts = empty_mat]
         
-        #Convected derivative - flow-align = 0: Jaumann, flow_align = 0.5: UC, flow_align = -0.5: LC.
-        
+        #Convected derivative - flow-align = 0: Jaumann, flow_align = 0.5: UC, flow_align = -0.5: LC.    
         convPxx = vx * DxPxx + vy * DyPxx + (Dxvy - Dyvx)*self.Pxy - 2*self.flow_align*(2*gammadotxx*self.Pxx + 2*gammadotxy*self.Pxy)
         convPyy = vx * DxPyy + vy * DyPyy + (Dyvx - Dxvy)*self.Pxy - 2*self.flow_align*(2*gammadotyy*self.Pyy + 2*gammadotxy*self.Pxy)
         convPxy = vx * DxPxy + vy * DyPxy + 0.5 * (Dxvy - Dyvx)*(self.Pyy - self.Pxx) - 2*self.flow_align*(self.Pxy*(gammadotxx + gammadotyy) + gammadotxy*(self.Pxx + self.Pyy))
@@ -440,14 +428,6 @@ class ActiveSheet:
         data = {'t': step_number * self.dt, 'Mxx': Mxx,
                                 'Myy': Myy, 'Mxy': Mxy, 'Pxx': self.Pxx, 'Pyy': self.Pyy, 'Pxy': self.Pxy, 'vx': self.vx, 'vy': self.vy,
                                 'gammadotxx': self.gammadotxx, 'gammadotyy': self.gammadotyy, 'gammadotxy': self.gammadotxy, 'where_pressure_diffusion': self.where_pressure_diffusion}
-        
-        # with gzip.open(dirname+f'/data_{int(step_number/nskip)}.gz', 'wb') as f:
-        #     # pickle.dump(data, open(dirname+f'/data_{int(step_number/nskip)}.pickle', 'wb'))
-        #     pickle.dump(data,f)
-            
-        # with bz2.BZ2File(dirname+f'/data_{int(step_number/nskip)}.pbz2', 'wb') as f:
-        #     # pickle.dump(data, open(dirname+f'/data_{int(step_number/nskip)}.pickle', 'wb'))
-        #     pickle.dump(data,f)
             
         # pickle.dump(data, open(dirname+f'/data_{int(step_number/nskip)}.pickle', 'wb'))
         pickle.dump(data, open(dirname+'/data_{}.pickle'.format(int(step_number/nskip)), 'wb'))
@@ -468,7 +448,6 @@ class ActiveSheet:
         fig, axs = plt.subplots(3, 3, figsize = (16,12))
         plt.cla() #clear current figure
         fig.suptitle(f"S0xx = {self.S0xx}, S0yy = {self.S0yy}, Tstar = {self.Tstar}, tm = {self.tmyosin}, tv = {self.tviscous}, Blk = {self.bulk_mod}, Shr = {self.shear_mod}, Frc = {self.friction}, D = {self.D}, flw_algn = {self.flow_align}", size = 16)
-        # fig.suptitle('S0xx = {},'.format(self.S0xx)+' S0yy = {},'.format(self.S0yy)+' Tstar = {},'.format(self.Tstar)+' tm = {},'.format(self.tmyosin)+' tv = {},'.format(self.tviscous)+' Blk = {},'.format(self.bulk_mod)+' Shr = {},'.format(self.shear_mod)+' Frc = {},'.format(self.friction)+' D = {},'.format(self.D)+' flw_algn = {}'.format(self.flow_align), size = 16)
         
         axs[0,0].set_title(f"Mxx at t = {t:.3f}, beta = {self.beta}")
         # axs[0,0].set_title('Mxx at t = {},'.format(round(t,4))+' beta = {}'.format(self.beta))
@@ -524,12 +503,6 @@ class ActiveSheet:
         p21 = axs[2,1].pcolormesh(self.axis_points[1:(self.Ngrid-1)],self.axis_points[1:(self.Ngrid-1)], self.vy[1:(self.Ngrid-1),1:(self.Ngrid-1)], cmap=plt.cm.jet)
         fig.colorbar(p21, ax=axs[2,1])
         p21.set_clim(-0.05,0.05)
-        
-        # axs[2,2].set_title(f"gammadotxx at t = {t:.3f}, beta = {self.beta} (interior only)")
-        # # axs[2,2].set_title('gammadotxx at t = {},'.format(round(t,4))+' beta = {}'.format(self.beta))
-        # p22 = axs[2,2].pcolormesh(self.axis_points[1:(self.Ngrid-1)],self.axis_points[1:(self.Ngrid-1)], self.gammadotxx[1:(self.Ngrid-1),1:(self.Ngrid-1)], cmap=plt.cm.jet)
-        # fig.colorbar(p22, ax=axs[2,2])
-        # p22.set_clim(-0.01,0.01)
         
         axs[2,2].set_title(f"velocity at t = {t:.3f}, beta = {self.beta} (interior only)")
         axs[2,2].quiver(self.axis_points[::vskip], self.axis_points[::vskip], self.vx[1:(self.Ngrid-1),1:(self.Ngrid-1)][::vskip,::vskip], self.vy[1:(self.Ngrid-1),1:(self.Ngrid-1)][::vskip,::vskip], color='b')

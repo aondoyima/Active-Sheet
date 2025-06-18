@@ -13,5 +13,3 @@ Outside of the packages in the standard python library, you will need these:
 - [ffmpeg](https://ffmpeg.org/) for turning a series of plots into a movie
 - [Matplotlib](https://matplotlib.org/) is a comprehensive library for creating static, animated, and interactive visualizations in Python.
 - [NumPy](https://numpy.org/) is the standard package for scientific computing with Python
-
-

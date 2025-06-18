@@ -1,4 +1,4 @@
-# Active-Sheet
+# Continuum model for an epithelial tissue
 Calculation of flow field and stresses in a model for epithelial tissue with active mechano-chemical feedback. 
 
 The model is described in my paper here: https://doi.org/10.1103/PhysRevLett.131.238301 

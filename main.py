@@ -2,6 +2,7 @@ import os
 from active_sheet import ActiveSheet
 import time
 import argparse
+import utils
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-b", "--beta", type = float, default = 0.5, help = "activity parameter")
@@ -15,43 +16,24 @@ parser.add_argument("-p", "--tplot", type = float, default = 10., help = "how of
 parser.add_argument("-n", "--noise_amp", type = float, default = 0., help = "noise amplitude for initial condition") #Update on desktop version
 parser.add_argument("-a", "--boundary", type = int, default = 1, help = "boundary type, 0 is uniax, 1 is biax, 2 is pull, 3 is push, 4 is pull only bottom")
 parser.add_argument("-d", "--top_dir", type = str, default = './', help = "top directory where data is saved")
-parser.add_argument("--plot", action = 'store_true', default = False, help = "switch for plotting")
 
 args = parser.parse_args()
 
-#physical_params
+#Assign params
 tmyosin = args.tmyosin
 tviscous = args.tviscous
-shear_mod = 0.5 #0.5
-bulk_mod = 1.0 #1.0
+beta = args.beta 
+
+#Generally keep these fixed
+shear_mod = 0.5 
+bulk_mod = 1.0 
 k0 = 8.
-friction = 1.0  # Defualt: 1
-m0 = 0.5  # Default: 0.5
-beta = args.beta # Activity
+friction = 1.0  
+m0 = 0.5  
 D = 1.
 
 btype = args.boundary
-
-if btype == 0:
-    S0xx = args.S0
-    S0yy = 0.
-    S0xy = 0.
-elif btype == 1:
-    S0xx = args.S0
-    S0yy = -args.S0
-    S0xy = 0.
-elif btype == 2:
-    S0xx = args.S0
-    S0yy = args.S0
-    S0xy = 0.
-elif btype == 3:
-    S0xx = -args.S0
-    S0yy = -args.S0
-    S0xy = 0.
-elif btype == 4: #pull on bottom only 
-    S0xx = 0
-    S0yy = args.S0
-    S0xy = 0
+S0xx, S0yy, S0xy = utils.select_bcs(args.S0,btype)
     
 #flow-align = 0: Jaumann, flow_align = 0.5: Upper Convected, flow_align = -0.5: Lower Convected.
 flow_align = args.flow_align  
@@ -85,12 +67,9 @@ simulator = ActiveSheet(dt, tmax, tplot, Ngrid, sys_size, D, tmyosin, tviscous, 
              gradlim, S0xx, S0yy, S0xy, cutgrad, myo_pert, flow_align, noise_amp, btype)
 
 simulator.set_initial_conditions()
-
 simulator.save_params(dirname_data,nskip)
 
 t1 = time.time()
-
-k = 0
 
 for k in range(maxtsteps):    
     simulator.integrate_one_step()
@@ -98,13 +77,9 @@ for k in range(maxtsteps):
     if k%nskip == 0:  
         print(f't = {k*dt:.2f}')         
         simulator.save_state(k,dirname_data,nskip)
-                
-        if args.plot:          
-            simulator.plot(k,dirname_data,vskip,nskip) 
             
     simulator.update_current_values()
-    k += 1
-    
+
 t2 = time.time()
 run_time = t2-t1
 print(f'run_time = {run_time}')

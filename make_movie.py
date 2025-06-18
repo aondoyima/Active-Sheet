@@ -8,33 +8,41 @@ beta = 0.7
 S0 = 0.04
 tmyosin = 5.0
 tviscous = 40.0
-btype = 2
+btype = 1
 flow_align = 0.0
-plot_option = 0
+#Choose plot type: 
+# 0 = single tenor component, 
+# 1 = quiver plot of velocity field, 
+# 2 = all M and pi components
+plot_option = 2
 
 L = 50.0
 Ngrid = int(4*L + 1)
-vskip = 11 #11
+vskip = 11 #default 11, for quiver plot
 x = np.linspace(-0.5*L,0.5*L,Ngrid)
 y = np.linspace(-0.5*L,0.5*L,Ngrid)
-x_mesh, y_mesh = np.meshgrid(x,y)
 
-movie_location = f'.//plots_for_movies_L{L}/flow_align_{flow_align}/beta_{beta}/tmyosin_{tmyosin}/tviscous_{tviscous}/S0_{S0}/btype_{btype}/'
+movie_location = f'.//movies_L{L}/flow_align_{flow_align}/beta_{beta}/tmyosin_{tmyosin}/tviscous_{tviscous}/S0_{S0}/btype_{btype}/'
 os.makedirs(movie_location, exist_ok=True)
 
 sim_data_location = f'.//data_L{L}/flow_align_0.0/beta_{beta}/tmyosin_{tmyosin}/tviscous_{tviscous}/S0_{S0}/btype_{btype}/'
 files = sorted(glob.glob(sim_data_location + '/data*.pickle'))
 num_saved_steps = len(files)
 
-#f_idx indexes time for a given simulation
+#First plot each frame
 for f_idx in range(num_saved_steps):
     
     f = sim_data_location+f'/data_{f_idx}.pickle'
     print(f't_idx = {f_idx}')
     sim_data = pickle.load(open(f,'rb'),encoding='latin1')
     figname = movie_location+'/Panel{}.png'.format(int(f_idx))
-    utils.plot_field(plot_option, sim_data, x, y, vskip, Ngrid, beta, S0, tmyosin, tviscous, btype, figname, selected_field = 'Mxx')
+    utils.plot_field(plot_option, btype, figname, sim_data, x, y, vskip, Ngrid, beta, S0, tmyosin, tviscous, selected_field = 'Mxx')
+    #Optional arguments:
 
-utils.pngs_to_movie(movie_location,'mov.gif')
+
+utils.pngs_to_movie(movie_location,'mov_oscstate_6x6.gif')
+
+#For github readme
+#![GIF](https://github.com/aondoyima/mechano-chemical-model/blob/main/mov.gif)
 
 

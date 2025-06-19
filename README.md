@@ -4,9 +4,9 @@ Calculation of flow field and stresses in a model for epithelial tissue with act
 The model is described in my paper here: https://doi.org/10.1103/PhysRevLett.131.238301 
 ![GIF](https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_6x6.gif)
 <p align="middle">
-  <img src="https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_gmdotxx.gif" width="300" />
-  <img src="https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_gmdotxx.gif" width="300" /> 
-  <img src="https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_gmdotxx.gif" width="300" />
+  <img src="https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_gmdotxx.gif" width="600" />
+  <img src="https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_gmdotyy.gif" width="600" /> 
+  <img src="https://github.com/aondoyima/mechano-chemical-model/blob/main/mov_oscstate_vel.gif" width="600" />
 </p>
 
 ## How to use

@@ -43,6 +43,7 @@ def plot_field(plot_option, btype, figname, sim_data, x, y, vskip, Ngrid, beta, 
         if selected_fieldname not in sim_data:
             raise ValueError(f"Field '{selected_fieldname}' not in sim_data keys.")
         selected_field = sim_data[selected_fieldname]
+        plt_label = plot_label(selected_fieldname)
 
         fig, ax = plt.subplots(figsize=(7, 6))
         p = ax.pcolormesh(y, x, selected_field, cmap='viridis', rasterized=True)
@@ -51,7 +52,7 @@ def plot_field(plot_option, btype, figname, sim_data, x, y, vskip, Ngrid, beta, 
         ax.tick_params(labelsize=font_label)
         ax.set_xlabel('$x$', fontsize=font_label)
         ax.set_ylabel('$y$', fontsize=font_label)
-        ax.set_title(f"$t$ = {sim_data['t']}, ${selected_fieldname}$, $\\beta$ = {beta}, \n $S_{{xx}}$ = {S0xx}, $S_{{yy}}$ = {S0yy}, $t_m$ = {tmyosin}, $t_v$ = {tviscous} \n", fontsize=font_title)
+        ax.set_title(f"{plt_label} at $t$ = {sim_data['t']}, \n $\\beta$ = {beta}, $S_{{xx}}$ = {S0xx}, $S_{{yy}}$ = {S0yy}, $t_m$ = {tmyosin}, $t_v$ = {tviscous} \n", fontsize=font_title)
         ax.set_aspect('equal')
         cbar = fig.colorbar(p, ax=ax)
         cbar.ax.tick_params(labelsize=font_label)
@@ -64,7 +65,7 @@ def plot_field(plot_option, btype, figname, sim_data, x, y, vskip, Ngrid, beta, 
             vy[1:Ngrid-1, 1:Ngrid-1][::vskip, ::vskip],
             color='navy', width=0.005
         )
-        ax.set_title(f"$\\vec{{v}}$ at $t$ = {t:.2f}, $\\beta$ = {beta}", fontsize=font_title)
+        ax.set_title(f"$\\vec{{v}}$ at $t$ = {t:.2f},  \n $\\beta$ = {beta}, $S_{{xx}}$ = {S0xx}, $S_{{yy}}$ = {S0yy}, $t_m$ = {tmyosin}, $t_v$ = {tviscous} \n", fontsize=font_title)
         ax.set_aspect('equal')
         ax.tick_params(labelsize=font_label)
         ax.set_xlabel('$x$', fontsize=font_label)
@@ -137,4 +138,30 @@ def select_bcs(S0, btype):
         S0xy = 0
 
     return S0xx, S0yy, S0xy
+
+def plot_label(field_name):
+    if field_name=='Mxx':
+        plot_label = '$M_{xx}$'
+    elif field_name=='Myy':
+        plot_label = '$M_{yy}$'
+    elif field_name=='Mxy':
+        plot_label = '$M_{xy}$'
+    elif field_name=='Pxx':
+        plot_label = '$\\pi_{xx}$'
+    elif field_name=='Pyy':
+        plot_label = '$\\pi_{yy}$'
+    elif field_name=='Pxy':
+        plot_label = '$\\pi_{xy}$'
+    elif field_name=='gammadotxx':
+        plot_label = '$\\dot{\\gamma}_{xx}$'
+    elif field_name=='gammadotyy':
+        plot_label = '$\\dot{\\gamma}_{yy}$'
+    elif field_name=='vx':
+        plot_label = '$v_x$'
+    elif field_name=='vy':
+        plot_label = '$v_y$'
+    else:
+        raise ValueError(f"Field '{field_name}' not in sim_data keys.")
+    
+    return plot_label
 

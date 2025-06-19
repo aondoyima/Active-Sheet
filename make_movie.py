@@ -14,7 +14,7 @@ flow_align = 0.0
 # 0 = single tenor component, 
 # 1 = quiver plot of velocity field, 
 # 2 = all M and pi components
-plot_option = 2
+plot_option = 0
 
 L = 50.0
 Ngrid = int(4*L + 1)
@@ -36,13 +36,15 @@ for f_idx in range(num_saved_steps):
     print(f't_idx = {f_idx}')
     sim_data = pickle.load(open(f,'rb'),encoding='latin1')
     figname = movie_location+'/Panel{}.png'.format(int(f_idx))
-    utils.plot_field(plot_option, btype, figname, sim_data, x, y, vskip, Ngrid, beta, S0, tmyosin, tviscous, selected_field = 'Mxx')
-    #Optional arguments:
+    utils.plot_field(plot_option, btype, figname, sim_data, x, y, vskip, Ngrid, beta, S0, tmyosin, tviscous, selected_field = 'gammadotyy', col_lower=-0.02, col_upper=0.02)
+
+    #Optional arguments: 
+    #If using plot option 0 - choose "selected_filed" and colour bar limits "col_lower" and "col_upper"
+    #If using plot option 2 - choose Mxx and Myy colour bar limits with "Mxx_lower"/"Mxx_upper"
+    #                       - choose Mxy colour bar limits with "Mxy_lower"/"Mxy_upper"
+    #                       - choose pressure colour bar limits (same for all components) with "pi_lower"/"pi_upper"
 
 
-utils.pngs_to_movie(movie_location,'mov_oscstate_6x6.gif')
-
-#For github readme
-#![GIF](https://github.com/aondoyima/mechano-chemical-model/blob/main/mov.gif)
+utils.pngs_to_movie(movie_location,'gammadotyy.gif')
 
 
